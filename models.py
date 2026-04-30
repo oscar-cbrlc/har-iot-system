@@ -1,9 +1,9 @@
-from sqalchemy import Column, DateTime, ForeignKey, Integer, String, Float
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqalchemy.sql import func
-
-Base = declarative_base()
+from sqlalchemy.sql import func
+from datetime import datetime
+from database import Base
 
 class SensorReading(Base):
     __tablename__ = 'sensor_reading';

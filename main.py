@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from database import SessionLocal, engine
+from database import SessionLocal, engine, Base
 
 from schema import ReadingCreate, ReadingResponse
 ### #from scema import PredictionResponse
@@ -37,7 +37,7 @@ async def create_reading(reading: ReadingCreate, db:Session = Depends(get_db)):
 
 # TODO GETs
 @app.get("/readings", response_model=List[ReadingResponse])
-async def get_readings(limit=100, device_id: str = None, db: Session = Depends(db)):
+async def get_readings(limit=100, device_id: str = None, db: Session = Depends(get_db)):
 
     #SELECT * FROM sensor_reading (WHERE device_id = device_id) ORDER BY timestamp DESC LIMIT 100
     query = db.query(SensorReading) 
