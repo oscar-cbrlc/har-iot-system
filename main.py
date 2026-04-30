@@ -51,6 +51,17 @@ async def create_reading(reading: ReadingCreate, db:Session = Depends(get_db)):
     db.refresh(db_reading) #for id and timestamp
     return db_reading
 
+@app.post("/readings_batch", response_model=dict, dependencies=[Depends(get_api_key)])
+async def create_reading_batch(readings: List[ReadingCreate], db:Session = Depends(get_db)):
+    db_readings = []
+    for r in readings:
+        db_reading = SensorReading(**r.dict())
+        db.add(db_reading)
+        db_readings.append(db_reading)
+    db.commit()
+
+    return {'count': len(db_readings)}
+
 # TODO GETs
 @app.get("/readings", response_model=List[ReadingResponse])
 async def get_readings(limit=100, device_id: str = None, db: Session = Depends(get_db)):
