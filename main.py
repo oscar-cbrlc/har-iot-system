@@ -27,7 +27,6 @@ is_production = os.getenv("ENVIRONMENT") == "production"
 def get_db():
     db = SessionLocal()
     try:
-        db.execute(text("SET TIME ZONE 'America/Mexico_City'"))
         yield db
     finally:
         db.close()
