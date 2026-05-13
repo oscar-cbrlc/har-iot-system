@@ -92,9 +92,9 @@ async def create_reading_batch(readings: List[ReadingCreate], db:Session = Depen
 
 # TODO GETs
 @app.get("/readings", response_model=List[ReadingResponse], dependencies=[Depends(get_api_key)])
-async def get_readings(limit=100, device_id: str = None, db: Session = Depends(get_db)):
+async def get_readings(limit=10000, device_id: str = None, db: Session = Depends(get_db)):
 
-    #SELECT * FROM sensor_reading (WHERE device_id = device_id) ORDER BY timestamp DESC LIMIT 100
+    #SELECT * FROM sensor_reading (WHERE device_id = device_id) ORDER BY timestamp DESC LIMIT 10000
     query = db.query(SensorReading) 
     if device_id:
         query = query.filter(SensorReading.device_id == device_id)
