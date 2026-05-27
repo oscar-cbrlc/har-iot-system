@@ -16,7 +16,7 @@ class ReadingCreate(BaseModel):
 # sending data
 class ReadingResponse(ReadingCreate):
     id: int
-    timestamp: datetime
+    #timestamp: datetime
 
     class Config:
         orm_mode = True

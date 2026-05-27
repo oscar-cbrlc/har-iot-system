@@ -62,7 +62,7 @@ async def create_reading(reading: ReadingCreate, db:Session = Depends(get_db)):
     # ejecutar insert
     db.commit()
 
-    # recuperar id y timestamp generados por la bd
+    # recuperar id  generados por la bd
     db.refresh(db_reading)
 
     # devuelve el objeto, automáticamente en json
@@ -83,7 +83,7 @@ async def create_reading_batch(readings: List[ReadingCreate], db:Session = Depen
     # ejecutar transacción
     db.commit()
 
-    # recuperar id y timestamp generados por la bd
+    # recuperar id generados por la bd
     for db_reading in db_readings:
         db.refresh(db_reading)
 
@@ -94,8 +94,10 @@ async def create_reading_batch(readings: List[ReadingCreate], db:Session = Depen
 @app.get("/readings", response_model=List[ReadingResponse], dependencies=[Depends(get_api_key)])
 async def get_readings(limit=10000, device_id: str = None, db: Session = Depends(get_db)):
 
-    #SELECT * FROM sensor_reading (WHERE device_id = device_id) ORDER BY timestamp DESC LIMIT 10000
+    #SELECT * FROM sensor_reading (WHERE device_id = device_id) ORDER BY id DESC LIMIT 10000
     query = db.query(SensorReading) 
     if device_id:
         query = query.filter(SensorReading.device_id == device_id)
-    return query.order_by(SensorReading.timestamp.desc()).limit(limit).all()
+    return query.order_by(SensorReading.id.asc()).limit(limit).all()
+
+
