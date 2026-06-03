@@ -9,7 +9,7 @@ class SensorReading(Base):
     __tablename__ = 'sensor_reading';
     id = Column(Integer, primary_key=True, index=True)
     device_id = Column(String, index=True)
-    timestamp = Column(DateTime, default = datetime.utcnow)
+    timestamp = Column(DateTime)
     accel_x = Column(Float)
     accel_y = Column(Float)
     accel_z = Column(Float)
