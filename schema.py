@@ -5,6 +5,7 @@ from typing import Optional
 # receiving data from ESP32, defines valid Json
 class ReadingCreate(BaseModel):
     device_id: str
+    timestamp: datetime
     accel_x: float
     accel_y: float
     accel_z: float
@@ -16,7 +17,7 @@ class ReadingCreate(BaseModel):
 # sending data
 class ReadingResponse(ReadingCreate):
     id: int
-    #timestamp: datetime
+    #
 
     class Config:
         orm_mode = True
