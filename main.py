@@ -150,7 +150,8 @@ async def predict_realtime(readings: List[ReadingCreate]):
 
     # predict and return
     predictions = model.predict(processed_features)
-    predicted_activity = str(predictions[0])
+    predicted_index = int(np.argmax(predictions[0]))
+    predicted_activity = activity_classes[predicted_index]
     return {
         'device_id': str(current_device_id),
         'accel_mean': float(processed_features['accel_mean'].iloc[0]),
