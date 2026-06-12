@@ -147,7 +147,7 @@ async def predict_realtime(readings: List[ReadingCreate]):
         'activity': predicted_activity
     }
 
-    for connections in active_connections:
+    for connection in active_connections:
         await connection.send_json(prediction_data)
 
     return prediction_data
