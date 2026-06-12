@@ -142,7 +142,7 @@ async def predict_realtime(readings: List[ReadingCreate]):
     # convertir json a dataframe
     df_raw = pd.DataFrame([r.dict() for r in readings])
 
-    current_device_id = readings.device_id
+    current_device_id = df_raw.device_id
     
     # pasar por pipeline de preprocesamiento de los datos
     processed_features = preprocessing_pipeline.transform(df_raw)
