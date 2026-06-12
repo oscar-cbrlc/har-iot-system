@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from database import SessionLocal, engine, Base
 
-from schema import ReadingCreate, ReadingResponse
+from schema import ReadingCreate, ReadingResponse, PredictionResponse
 ### #from scema import PredictionResponse
 from models import SensorReading
 
