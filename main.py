@@ -71,7 +71,7 @@ api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 # pipeline de preprocesamiento de datos
 preprocessing_pipeline = joblib.load('preprocessing_pipeline.joblib')
 
-model = ydf.load_model("/har_rf_model")
+model = ydf.load_model("har_rf_model")
 
 activity_classes = model.label_classes() 
 
