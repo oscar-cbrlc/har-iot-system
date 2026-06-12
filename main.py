@@ -19,6 +19,8 @@ import joblib
 import pandas as pd
 import numpy as np
 
+from fastapi import WebSocket
+
 # web socket
 class ConnectionManager:
     def __init__(self):
@@ -77,6 +79,7 @@ model = ydf.load_model("har_rf_model")
 
 activity_classes = model.label_classes() 
 
+active_connections = []
 
 
 async def get_api_key(api_key: str = Security(api_key_header)):
@@ -152,7 +155,8 @@ async def predict_realtime(readings: List[ReadingCreate]):
     predictions = model.predict(processed_features)
     predicted_index = int(np.argmax(predictions[0]))
     predicted_activity = activity_classes[predicted_index]
-    return {
+
+    prediction_data = {
         'device_id': str(current_device_id),
         'accel_mean': float(processed_features['accel_mean'].iloc[0]),
         'accel_var': float(processed_features['accel_var'].iloc[0]),
@@ -164,3 +168,18 @@ async def predict_realtime(readings: List[ReadingCreate]):
         'gyro_min': float(processed_features['gyro_min'].iloc[0]),
         'activity': predicted_activity
     }
+
+    for connections in active_connections:
+        await connection.send_json(prediction_data)
+
+    return prediction_data
+
+@app.websocket('ws/predictions')
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    active_connections.append(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except Exception:
+        active_connections.remove(websocket)
