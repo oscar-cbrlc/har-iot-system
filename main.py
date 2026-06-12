@@ -67,7 +67,7 @@ API_KEY_NAME = "X-API-Key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 # pipeline de preprocesamiento de datos
-preprocessing_pipeline = joblib.load('preproc_pipe.joblib')
+preprocessing_pipeline = joblib.load('preproc_pipeline.joblib')
 
 predictor_model = ydf.load_model("/har_rf_model")
 
@@ -143,6 +143,14 @@ async def predict_realtime(readings: List[ReadingCreate]):
     predictions = predictor_model.predict_class(processed_features)
 
     return {
-        features: processed_features,
-        activity: predictions[0],
+        device_id: df_raw['device_id'].iloc[0],
+        accel_mean: processed_features['accel_mean'].iloc[0],
+        accel_var: processed_features['accel_var'].iloc[0],
+        gyro_mean: processed_features['gyro_mean'].iloc[0],
+        gyro_var: processed_features['gyro_var'].iloc[0],
+        accel_max: processed_features['accel_max'].iloc[0],
+        accel_min: processed_features['accel_min'].iloc[0],
+        gyro_max: processed_features['gyro_max'].iloc[0],
+        gyro_min: processed_features['gyro_min'].iloc[0],
+        activity: predictions[0]
     }

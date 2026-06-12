@@ -25,10 +25,12 @@ class ReadingResponse(ReadingCreate):
 # cuando est'e el modelo
 class PredictionResponse(BaseModel):
     device_id: str
-    accel_x: float
-    accel_y: float
-    accel_z: float
-    pitch: float
-    roll: float
-    yaw: float
+    accel_mean: float
+    accel_var: float
+    gyro_mean: float
+    gyro_var: float
+    accel_max: float
+    accel_min: float
+    gyro_max: float
+    gyro_min: float
     activity: str
