@@ -21,28 +21,6 @@ import numpy as np
 
 from fastapi import WebSocket
 
-# web socket
-class ConnectionManager:
-    def __init__(self):
-        # guardar conexiones activas: {device_id: websocket}
-        self.active_connections: Dict[str, WebSocket] = {}
-    
-    async def connect(self, websocket: WebSocket, device_id: str):
-        await websocket.accept()
-        self.active_connections[device_id] = websocket
-    
-    async def disconnect(self, device_id: str):
-        if device_id in self.active_connections:
-            del self.active_connections[device_id]
-    
-    async def send_prediction(self, message: dict, device_id:str):
-        if device_id in self.active_connections:
-            websocket = self.active_connections[device_id]
-            await websocket.send_json(message)
-
-manager = ConnectionManager()
-
-
 # cargar las variables de entorno
 load_dotenv('.env')
 
@@ -174,7 +152,7 @@ async def predict_realtime(readings: List[ReadingCreate]):
 
     return prediction_data
 
-@app.websocket('ws/predictions')
+@app.websocket('/ws/predictions')
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     active_connections.append(websocket)
