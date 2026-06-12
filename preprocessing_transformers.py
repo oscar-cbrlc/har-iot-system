@@ -54,7 +54,7 @@ class FeatureExtractorTransformer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X):
+    def transform(self, X, y=None):
         if not isinstance(X, pd.DataFrame):
             raise TypeError("Input X must be a pandas DataFrame.")
 
@@ -62,8 +62,9 @@ class FeatureExtractorTransformer(BaseEstimator, TransformerMixin):
             raise ValueError("DataFrame must contain 'accel_mag', and 'gyro_mag' columns.")
 
         processed_dfs = []
-        if 'activity' in X.columns:
-            for activity_name in X['activity'].unique():
+        
+        if 'activity' in X.columns and X['activity'].notna().any():
+            for activity_name in X['activity'].dropna().unique():
                 df_activity = X[X['activity'] == activity_name].copy()
                 df_activity['window_id'] = np.arange(len(df_activity)) // self.window_size
                 processed_dfs.append(df_activity)
