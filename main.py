@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from typing import List, Dict
 import ydf
 import joblib
+import pandas as pd
 
 # web socket
 class ConnectionManager:
