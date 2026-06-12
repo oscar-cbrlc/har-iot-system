@@ -150,17 +150,17 @@ async def predict_realtime(readings: List[ReadingCreate]):
 
     # predict and return
     prediction_probs = model.predict(processed_features)
-    predicted_index = int(np.argmax(prediction_probs, axis=1))
+    predicted_index = int(np.argmax(prediction_probs[0], axis=1))
     predicted_activity = activity_classes[predicted_index]
     return {
         device_id: current_device_id,
-        accel_mean: float(processed_features['accel_mean'].iloc),
-        accel_var: float(processed_features['accel_var'].iloc),
-        gyro_mean: float(processed_features['gyro_mean'].iloc),
-        gyro_var: float(processed_features['gyro_var'].iloc),
-        accel_max: float(processed_features['accel_max'].iloc),
-        accel_min: float(processed_features['accel_min'].iloc),
-        gyro_max: float(processed_features['gyro_max'].iloc),
-        gyro_min: float(processed_features['gyro_min'].iloc),
+        accel_mean: float(processed_features['accel_mean'].iloc[0]),
+        accel_var: float(processed_features['accel_var'].iloc[0]),
+        gyro_mean: float(processed_features['gyro_mean'].iloc[0]),
+        gyro_var: float(processed_features['gyro_var'].iloc[0]),
+        accel_max: float(processed_features['accel_max'].iloc[0]),
+        accel_min: float(processed_features['accel_min'].iloc[0]),
+        gyro_max: float(processed_features['gyro_max'].iloc[0]),
+        gyro_min: float(processed_features['gyro_min'].iloc[0]),
         activity: predicted_activity
     }
