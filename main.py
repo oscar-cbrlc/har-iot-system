@@ -148,7 +148,7 @@ async def predict_realtime(readings: List[ReadingCreate]):
     processed_features = preprocessing_pipeline.transform(df_raw)
 
     # predict and return
-    prediction_probs = model.predict(processed_features_df)
+    prediction_probs = model.predict(processed_features)
     predicted_index = np.argmax(prediction_probs, axis=1)
     predicted_activity = activity_classes[predicted_index]
     return {
