@@ -149,9 +149,8 @@ async def predict_realtime(readings: List[ReadingCreate]):
     processed_features = preprocessing_pipeline.transform(df_raw)
 
     # predict and return
-    prediction_probs = model.predict(processed_features)
-    predicted_index = int(np.argmax(prediction_probs[0], axis=1))
-    predicted_activity = activity_classes[predicted_index]
+    predictions = model.predict(processed_features)
+    predicted_activity = str(predictions[0])
     return {
         device_id: current_device_id,
         accel_mean: float(processed_features['accel_mean'].iloc[0]),
