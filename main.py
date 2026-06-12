@@ -152,14 +152,14 @@ async def predict_realtime(readings: List[ReadingCreate]):
     predictions = model.predict(processed_features)
     predicted_activity = str(predictions[0])
     return {
-        device_id: current_device_id,
-        accel_mean: float(processed_features['accel_mean'].iloc[0]),
-        accel_var: float(processed_features['accel_var'].iloc[0]),
-        gyro_mean: float(processed_features['gyro_mean'].iloc[0]),
-        gyro_var: float(processed_features['gyro_var'].iloc[0]),
-        accel_max: float(processed_features['accel_max'].iloc[0]),
-        accel_min: float(processed_features['accel_min'].iloc[0]),
-        gyro_max: float(processed_features['gyro_max'].iloc[0]),
-        gyro_min: float(processed_features['gyro_min'].iloc[0]),
-        activity: predicted_activity
+        'device_id': current_device_id,
+        'accel_mean': float(processed_features['accel_mean'].iloc[0]),
+        'accel_var': float(processed_features['accel_var'].iloc[0]),
+        'gyro_mean': float(processed_features['gyro_mean'].iloc[0]),
+        'gyro_var': float(processed_features['gyro_var'].iloc[0]),
+        'accel_max': float(processed_features['accel_max'].iloc[0]),
+        'accel_min': float(processed_features['accel_min'].iloc[0]),
+        'gyro_max': float(processed_features['gyro_max'].iloc[0]),
+        'gyro_min': float(processed_features['gyro_min'].iloc[0]),
+        'activity': predicted_activity
     }
