@@ -33,9 +33,9 @@ class MedianFilterTransformer(BaseEstimator, TransformerMixin):
         if not isinstance(X, pd.DataFrame):
             raise TypeError("Input X must be a pandas DataFrame.")
 
-        if 'activity' in X.columns:
+        if 'activity' in X.columns and X['activity'].notna().any():
             df_filtered_list = []
-            for activity_name in X['activity'].unique():
+            for activity_name in X['activity'].dropna().unique():
                 df_activity = X[X['activity'] == activity_name].copy()
                 filtered_data = median_filter(df_activity[self.numeric_cols], self.window_size)
                 df_activity[self.numeric_cols] = filtered_data
