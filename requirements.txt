@@ -3,6 +3,9 @@ uvicorn==0.46.0
 sqlalchemy==2.0.49
 psycopg2-binary==2.9.12
 python-dotenv==1.2.2
-#joblib==
-#numpy==
+joblib==1.5.3
+numpy==2.4.6
 pydantic==2.13.3
+ydf==0.16.1
+scikit-learn==1.9.0
+pandas==3.0.3

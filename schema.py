@@ -23,4 +23,12 @@ class ReadingResponse(ReadingCreate):
         orm_mode = True
 
 # cuando est'e el modelo
-# class PredictionResponse(BaseModel)
+class PredictionResponse(BaseModel):
+    device_id: str
+    accel_x: float
+    accel_y: float
+    accel_z: float
+    pitch: float
+    roll: float
+    yaw: float
+    activity: str

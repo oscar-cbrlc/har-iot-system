@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Security
+from fastapi import FastAPI, Depends, HTTPException, status, Security, WebSocket
 from fastapi.security.api_key import APIKeyHeader
 
 from sqlalchemy.orm import Session
@@ -12,7 +12,30 @@ from models import SensorReading
 import os
 from dotenv import load_dotenv
 
-from typing import List
+from typing import List, Dict
+import ydf
+
+# web socket
+class ConnectionManager:
+    def __init__(self):
+        # guardar conexiones activas: {device_id: websocket}
+        self.active_connections: Dict[str, WebSocket] = {}
+    
+    async def connect(self, websocket: WebSocket, device_id: str):
+        await websocket.accept()
+        self.active_connections[device_id] = websocket
+    
+    async def disconnect(self, device_id: str):
+        if device_id in self.active_connections:
+            del self.active_connections[device_id]
+    
+    async def send_prediction(self, message: dict, device_id:str):
+        if device_id in self.active_connections:
+            websocket = self.active_connections[device_id]
+            await websocket.send_json(message)
+
+manager = ConnectionManager()
+
 
 # cargar las variables de entorno
 load_dotenv('.env')
@@ -42,6 +65,12 @@ API_KEY_NAME = "X-API-Key"
 
 # objeto para buscar en el header la api key
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
+# pipeline de preprocesamiento de datos
+preprocessing_pipeline = joblib.load('preproc_pipe.joblib')
+
+predictor_model = ydf.load_model("/har_rf_model")
+
 
 async def get_api_key(api_key: str = Security(api_key_header)):
     if api_key == API_KEY:
@@ -101,3 +130,19 @@ async def get_readings(limit=10000, device_id: str = None, db: Session = Depends
     return query.order_by(SensorReading.id.asc()).limit(limit).all()
 
 
+@app.post("/predict_realtime", response_model=PredictionResponse)
+async def predict_realtime(readings: List[ReadingCreate]):
+    
+    # convertir json a dataframe
+    df_raw = pd.DataFrame([r.dict() for r in readings])
+    
+    # pasar por pipeline de preprocesamiento de los datos
+    processed_features = preprocessing_pipeline.transform(df_raw)
+
+    # predict and return
+    predictions = predictor_model.predict_class(processed_features)
+
+    return {
+        features: processed_features,
+        activity: predictions[0],
+    }
