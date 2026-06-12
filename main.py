@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Security, WebSocket
 from fastapi.security.api_key import APIKeyHeader
+from preprocessing_transformers import FullPreprocessingTransformer
 
 from sqlalchemy.orm import Session
 
@@ -68,9 +69,12 @@ API_KEY_NAME = "X-API-Key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 # pipeline de preprocesamiento de datos
-preprocessing_pipeline = joblib.load('preproc_pipeline.joblib')
+preprocessing_pipeline = joblib.load('preprocessing_pipeline.joblib')
 
-predictor_model = ydf.load_model("/har_rf_model")
+model = ydf.load_model("/har_rf_model")
+
+activity_classes = model.label_classes() 
+
 
 
 async def get_api_key(api_key: str = Security(api_key_header)):
@@ -136,22 +140,25 @@ async def predict_realtime(readings: List[ReadingCreate]):
     
     # convertir json a dataframe
     df_raw = pd.DataFrame([r.dict() for r in readings])
+
+    current_device_id = readings.device_id
     
     # pasar por pipeline de preprocesamiento de los datos
     processed_features = preprocessing_pipeline.transform(df_raw)
 
     # predict and return
-    predictions = predictor_model.predict_class(processed_features)
-
+    prediction_probs = model.predict(processed_features_df)
+    predicted_index = np.argmax(prediction_probs, axis=1)
+    predicted_activity = activity_classes[predicted_index]
     return {
-        device_id: df_raw['device_id'].iloc[0],
-        accel_mean: processed_features['accel_mean'].iloc[0],
-        accel_var: processed_features['accel_var'].iloc[0],
-        gyro_mean: processed_features['gyro_mean'].iloc[0],
-        gyro_var: processed_features['gyro_var'].iloc[0],
-        accel_max: processed_features['accel_max'].iloc[0],
-        accel_min: processed_features['accel_min'].iloc[0],
-        gyro_max: processed_features['gyro_max'].iloc[0],
-        gyro_min: processed_features['gyro_min'].iloc[0],
-        activity: predictions[0]
+        device_id: current_device_id,
+        accel_mean: processed_features['accel_mean'].iloc,
+        accel_var: processed_features['accel_var'].iloc,
+        gyro_mean: processed_features['gyro_mean'].iloc,
+        gyro_var: processed_features['gyro_var'].iloc,
+        accel_max: processed_features['accel_max'].iloc,
+        accel_min: processed_features['accel_min'].iloc,
+        gyro_max: processed_features['gyro_max'].iloc,
+        gyro_min: processed_features['gyro_min'].iloc,
+        activity: predicted_activity
     }
