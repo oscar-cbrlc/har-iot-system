@@ -17,6 +17,7 @@ from typing import List, Dict
 import ydf
 import joblib
 import pandas as pd
+import numpy as np
 
 # web socket
 class ConnectionManager:
