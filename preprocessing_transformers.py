@@ -127,8 +127,3 @@ class FullPreprocessingTransformer(BaseEstimator, TransformerMixin):
         output_df = pd.DataFrame(X_scaled, columns=self.feature_columns)
 
         return output_df
-
-full_preprocessing_pipeline = FullPreprocessingTransformer(
-    median_window_size=5,
-    feature_window_size=5
-)
