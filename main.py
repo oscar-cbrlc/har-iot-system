@@ -143,7 +143,7 @@ async def predict_realtime(readings: List[ReadingCreate]):
     # convertir json a dataframe
     df_raw = pd.DataFrame([r.dict() for r in readings])
 
-    current_device_id = df_raw.device_id
+    current_device_id = df_raw.device_id[0]
     
     # pasar por pipeline de preprocesamiento de los datos
     processed_features = preprocessing_pipeline.transform(df_raw)
@@ -152,7 +152,7 @@ async def predict_realtime(readings: List[ReadingCreate]):
     predictions = model.predict(processed_features)
     predicted_activity = str(predictions[0])
     return {
-        'device_id': current_device_id,
+        'device_id': str(current_device_id),
         'accel_mean': float(processed_features['accel_mean'].iloc[0]),
         'accel_var': float(processed_features['accel_var'].iloc[0]),
         'gyro_mean': float(processed_features['gyro_mean'].iloc[0]),
